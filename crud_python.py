@@ -3,13 +3,19 @@ import tkinter.messagebox as tkmb
 import sqlite3
 
 ####################################
-############ FUNCIONES##############
+########### CONSTANTES #############
+####################################
+
+DB_NAME = "Usuarios.sqlite"
+
+####################################
+############ FUNCIONES #############
 ####################################
 
 def conectarDB():
     
     try:
-        connection_db = sqlite3.connect("Usuarios.sqlite")
+        connection_db = sqlite3.connect(DB_NAME)
         cursor_db = connection_db.cursor()
         cursor_db.execute(''' 
             CREATE TABLE USUARIOS (
@@ -32,6 +38,31 @@ def salir():
     if respuesta == "yes":
         root.destroy()
 
+def limpiarCampos():
+    my_id.set("")
+    my_nombre.set("")
+    my_apellido.set("")
+    my_password.set("")
+    my_direccion.set("")
+    text_comentarios.delete(1.0, END)
+
+def create():
+    connection_db = sqlite3.connect(DB_NAME)
+    cursor_db = connection_db.cursor()
+
+    cursor_db.execute("INSERT INTO USUARIOS VALUES(NULL, '" + 
+        my_nombre.get() +
+        "', '" + my_apellido.get() + 
+        "', '" + my_password.get() + 
+        "', '" + my_direccion.get() + 
+        "', '" + text_comentarios.get("1.0", END) + "')"
+    )
+
+    connection_db.commit()
+
+    limpiarCampos()
+
+    tkmb.showinfo("BBDD", "Registro insertado con exito")
 
 root = Tk()
 root.eval('tk::PlaceWindow . center')
@@ -52,10 +83,10 @@ menu_bd.add_command(label="Conectar", command=conectarDB)
 menu_bd.add_command(label="Salir", command=salir)
 
 menu_borrar = Menu(menu_barra, tearoff=0)
-menu_borrar.add_command(label="Borrar campos")
+menu_borrar.add_command(label="Borrar campos", command=limpiarCampos)
 
 menu_crud = Menu(menu_barra, tearoff=0)
-menu_crud.add_command(label="Create")
+menu_crud.add_command(label="Create", command=create)
 menu_crud.add_command(label="Read")
 menu_crud.add_command(label="Update")
 menu_crud.add_command(label="Delete")
@@ -98,21 +129,27 @@ label_comentarios.grid(row=5, column=0, sticky="w", padx=10, pady=10)
 ############## CAMPOS ##############
 ####################################
 
-input_id = Entry(mi_frame)
+my_id = StringVar() 
+my_nombre = StringVar()
+my_apellido = StringVar() 
+my_password = StringVar() 
+my_direccion = StringVar() 
+
+input_id = Entry(mi_frame, textvariable=my_id)
 input_id.grid(row=0, column=1, padx=10, pady=10)
 input_id.config(fg="green")
 
-input_nombre = Entry(mi_frame)
+input_nombre = Entry(mi_frame, textvariable=my_nombre)
 input_nombre.grid(row=1, column=1, padx=10, pady=10)
 
-input_apellido = Entry(mi_frame)
+input_apellido = Entry(mi_frame, textvariable=my_apellido)
 input_apellido.grid(row=2, column=1, padx=10, pady=10)
 
-input_password = Entry(mi_frame)
+input_password = Entry(mi_frame, textvariable=my_password)
 input_password.grid(row=3, column=1, padx=10, pady=10)
 input_password.config(show="*")
 
-input_direccion = Entry(mi_frame)
+input_direccion = Entry(mi_frame, textvariable=my_direccion)
 input_direccion.grid(row=4, column=1, padx=10, pady=10)
 
 text_comentarios = Text(mi_frame, width=26, height=5)
@@ -125,7 +162,7 @@ text_comentarios.grid(row=5, column=1, padx=10, pady=10)
 botonera_frame = Frame(root)
 botonera_frame.pack()
 
-boton_create = Button(botonera_frame, text="Create")
+boton_create = Button(botonera_frame, text="Create", command=create)
 boton_create.grid(row=1, column=0, sticky="w")
 
 boton_read = Button(botonera_frame, text="Read")
