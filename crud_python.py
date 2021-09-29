@@ -9,7 +9,7 @@ import sqlite3
 DB_NAME = "Usuarios.sqlite"
 
 ####################################
-############ FUNCIONES #############
+########## FUNCIONES UX ############
 ####################################
 
 def makeMenu():
@@ -57,6 +57,10 @@ def labels():
 
     label_comentarios = Label(mi_frame, text="Comentarios:")
     label_comentarios.grid(row=5, column=0, sticky="w", padx=10, pady=10)
+
+####################################
+########## FUNCIONES BD ############
+####################################
 
 def conectarDB():
     
@@ -110,6 +114,10 @@ def create():
 
     tkmb.showinfo("BBDD", "Registro insertado con exito")
 
+####################################
+########### APLICACION #############
+####################################
+
 root = Tk()
 root.eval('tk::PlaceWindow . center')
 
@@ -122,7 +130,6 @@ mi_frame.pack()
 
 makeMenu()
 labels()
-
 
 ####################################
 ############## CAMPOS ##############
