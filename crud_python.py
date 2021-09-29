@@ -1,6 +1,37 @@
 from tkinter import *
-from tkinter import messagebox
+import tkinter.messagebox as tkmb
 import sqlite3
+
+####################################
+############ FUNCIONES##############
+####################################
+
+def conectarDB():
+    
+    try:
+        connection_db = sqlite3.connect("Usuarios.sqlite")
+        cursor_db = connection_db.cursor()
+        cursor_db.execute(''' 
+            CREATE TABLE USUARIOS (
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                NOMBRE VARCHAR(50),
+                APELLIDO VARCHAR(50),
+                PASSWORD VARCHAR(50),
+                DIRECCION VARCHAR(50),
+                COMENTARIOS VARCHAR(100)
+            )
+        ''')
+    
+        tkmb.showinfo("BBDD", "BBDD creada con exito", icon='info')
+    except:
+        tkmb.showwarning("Atencion!", "La BBDD ya existe", icon='warning')
+
+def salir():
+    respuesta = tkmb.askquestion("Salir", "Estas seguro que quieres cerrar la aplicacion?", icon='question')
+
+    if respuesta == "yes":
+        root.destroy()
+
 
 root = Tk()
 root.eval('tk::PlaceWindow . center')
@@ -17,8 +48,8 @@ menu_barra = Menu(root)
 root.config(menu=menu_barra)
 
 menu_bd = Menu(menu_barra, tearoff=0)
-menu_bd.add_command(label="Conectar")
-menu_bd.add_command(label="Salir")
+menu_bd.add_command(label="Conectar", command=conectarDB)
+menu_bd.add_command(label="Salir", command=salir)
 
 menu_borrar = Menu(menu_barra, tearoff=0)
 menu_borrar.add_command(label="Borrar campos")
@@ -57,7 +88,7 @@ label_apellido.grid(row=2, column=0, sticky="w", padx=10, pady=10)
 label_password = Label(mi_frame, text="Password:")
 label_password.grid(row=3, column=0, sticky="w", padx=10, pady=10)
 
-label_direccion = Label(mi_frame, text="Dirección:")
+label_direccion = Label(mi_frame, text="Direccion:")
 label_direccion.grid(row=4, column=0, sticky="w", padx=10, pady=10)
 
 label_comentarios = Label(mi_frame, text="Comentarios:")
