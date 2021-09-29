@@ -26,8 +26,8 @@ def makeMenu():
 
     menu_crud = Menu(menu_barra, tearoff=0)
     menu_crud.add_command(label="Create", command=create)
-    menu_crud.add_command(label="Read")
-    menu_crud.add_command(label="Update")
+    menu_crud.add_command(label="Read", command=read)
+    menu_crud.add_command(label="Update", command=update)
     menu_crud.add_command(label="Delete")
 
     menu_help = Menu(menu_barra, tearoff=0)
@@ -94,7 +94,7 @@ def limpiarCampos():
     my_apellido.set("")
     my_password.set("")
     my_direccion.set("")
-    text_comentarios.delete(1.0, END)
+    my_comentarios.delete(1.0, END)
 
 def create():
     connection_db = sqlite3.connect(DB_NAME)
@@ -105,7 +105,7 @@ def create():
         "', '" + my_apellido.get() + 
         "', '" + my_password.get() + 
         "', '" + my_direccion.get() + 
-        "', '" + text_comentarios.get("1.0", END) + "')"
+        "', '" + my_comentarios.get("1.0", END) + "')"
     )
 
     connection_db.commit()
@@ -113,6 +113,37 @@ def create():
     limpiarCampos()
 
     tkmb.showinfo("BBDD", "Registro insertado con exito")
+
+def read():
+    connection_db = sqlite3.connect(DB_NAME)
+    cursor_db = connection_db.cursor()
+
+    cursor_db.execute("SELECT * FROM USUARIOS WHERE ID = " + my_id.get())
+
+    user = cursor_db.fetchall()
+
+    for usr in user:
+        my_id.set(usr[0])
+        my_nombre.set(usr[1])
+        my_apellido.set(usr[2])
+        my_password.set(usr[3])
+        my_direccion.set(usr[4])
+        my_comentarios.insert("1.0", usr[5])
+
+    connection_db.commit()
+
+def update():
+    connection_db = sqlite3.connect(DB_NAME)
+    cursor_db = connection_db.cursor()
+
+    cursor_db.execute("UPDATE USUARIOS SET NOMBRE=?, APELLIDO = ?, PASSWORD = ?, DIRECCION = ?, COMENTARIOS = ? WHERE ID=" + 
+    my_id.get(),
+    (my_nombre.get(), my_apellido.get(), my_password.get(), my_direccion.get(), my_comentarios.get("1.0", END))
+    )
+
+    connection_db.commit()
+
+    tkmb.showinfo("BBDD", "Registro actualizado con exito")
 
 ####################################
 ########### APLICACION #############
@@ -158,8 +189,8 @@ input_password.config(show="*")
 input_direccion = Entry(mi_frame, textvariable=my_direccion)
 input_direccion.grid(row=4, column=1, padx=10, pady=10)
 
-text_comentarios = Text(mi_frame, width=26, height=5)
-text_comentarios.grid(row=5, column=1, padx=10, pady=10)
+my_comentarios = Text(mi_frame, width=26, height=5)
+my_comentarios.grid(row=5, column=1, padx=10, pady=10)
 
 ####################################
 ############# BOTONERA #############
@@ -171,10 +202,10 @@ botonera_frame.pack()
 boton_create = Button(botonera_frame, text="Create", command=create)
 boton_create.grid(row=1, column=0, sticky="w")
 
-boton_read = Button(botonera_frame, text="Read")
+boton_read = Button(botonera_frame, text="Read", command=read)
 boton_read.grid(row=1, column=2, sticky="w")
 
-boton_update = Button(botonera_frame, text="Update")
+boton_update = Button(botonera_frame, text="Update", command=update)
 boton_update.grid(row=1, column=3, sticky="w")
 
 boton_delete = Button(botonera_frame, text="Delete")
