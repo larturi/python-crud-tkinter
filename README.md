@@ -1,5 +1,5 @@
 # CRUD Python Tkinter
-CRUD basico con Pithon Tjinter y Sqlite
+CRUD basico con Pithon Tkinter y Sqlite
 
 # Ejecución:
 ```

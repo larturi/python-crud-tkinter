@@ -9,6 +9,20 @@ import sqlite3
 DB_NAME = "Usuarios.sqlite"
 
 ####################################
+########### APLICACION #############
+####################################
+
+root = Tk()
+root.eval('tk::PlaceWindow . center')
+
+root.title("Python CRUD")
+root.maxsize(340, 380) 
+root.minsize(340, 380) 
+
+mi_frame = Frame(root)
+mi_frame.pack()
+
+####################################
 ########## FUNCIONES UX ############
 ####################################
 
@@ -28,7 +42,7 @@ def makeMenu():
     menu_crud.add_command(label="Create", command=create)
     menu_crud.add_command(label="Read", command=read)
     menu_crud.add_command(label="Update", command=update)
-    menu_crud.add_command(label="Delete")
+    menu_crud.add_command(label="Delete", command=delete)
 
     menu_help = Menu(menu_barra, tearoff=0)
     menu_help.add_command(label="Licencia")
@@ -122,6 +136,11 @@ def read():
 
     user = cursor_db.fetchall()
 
+    if not user:
+        tkmb.showinfo("BBDD", "No existe un usuario con ID " + str(my_id.get()))
+
+    limpiarCampos()
+
     for usr in user:
         my_id.set(usr[0])
         my_nombre.set(usr[1])
@@ -145,26 +164,23 @@ def update():
 
     tkmb.showinfo("BBDD", "Registro actualizado con exito")
 
-####################################
-########### APLICACION #############
-####################################
+def delete():
 
-root = Tk()
-root.eval('tk::PlaceWindow . center')
+    connection_db = sqlite3.connect(DB_NAME)
+    cursor_db = connection_db.cursor()
 
-root.title("Python CRUD")
-root.maxsize(340, 380) 
-root.minsize(340, 380) 
+    cursor_db.execute("DELETE FROM USUARIOS WHERE ID=" + my_id.get())
 
-mi_frame = Frame(root)
-mi_frame.pack()
+    connection_db.commit()
 
-makeMenu()
-labels()
+    tkmb.showinfo("BBDD", "Registro eliminado con exito")
 
 ####################################
 ############## CAMPOS ##############
 ####################################
+
+makeMenu()
+labels()
 
 my_id = StringVar() 
 my_nombre = StringVar()
@@ -208,7 +224,7 @@ boton_read.grid(row=1, column=2, sticky="w")
 boton_update = Button(botonera_frame, text="Update", command=update)
 boton_update.grid(row=1, column=3, sticky="w")
 
-boton_delete = Button(botonera_frame, text="Delete")
+boton_delete = Button(botonera_frame, text="Delete", command=delete)
 boton_delete.grid(row=1, column=4, sticky="w")
 
 root.mainloop()
