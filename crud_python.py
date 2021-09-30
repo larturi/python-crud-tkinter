@@ -114,13 +114,9 @@ def create():
     connection_db = sqlite3.connect(DB_NAME)
     cursor_db = connection_db.cursor()
 
-    cursor_db.execute("INSERT INTO USUARIOS VALUES(NULL, '" + 
-        my_nombre.get() +
-        "', '" + my_apellido.get() + 
-        "', '" + my_password.get() + 
-        "', '" + my_direccion.get() + 
-        "', '" + my_comentarios.get("1.0", END) + "')"
-    )
+    datos = my_nombre.get(), my_apellido.get(), my_password.get(), my_direccion.get(), my_comentarios.get("1.0", END)
+
+    cursor_db.execute("INSERT INTO USUARIOS VALUES(NULL,?,?,?,?,?)", (datos))
 
     connection_db.commit()
 
@@ -155,10 +151,10 @@ def update():
     connection_db = sqlite3.connect(DB_NAME)
     cursor_db = connection_db.cursor()
 
+    datos = my_nombre.get(), my_apellido.get(), my_password.get(), my_direccion.get(), my_comentarios.get("1.0", END)
+
     cursor_db.execute("UPDATE USUARIOS SET NOMBRE=?, APELLIDO = ?, PASSWORD = ?, DIRECCION = ?, COMENTARIOS = ? WHERE ID=" + 
-    my_id.get(),
-    (my_nombre.get(), my_apellido.get(), my_password.get(), my_direccion.get(), my_comentarios.get("1.0", END))
-    )
+    my_id.get(),(datos))
 
     connection_db.commit()
 
